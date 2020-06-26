@@ -1,6 +1,7 @@
 package com.nbs.sampledidip.presentation
 
 import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,13 +14,16 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class MainViewModel(private val personUseCase: PersonUseCase, private val compositeDisposable: CompositeDisposable) : ViewModel() {
+class MainViewModel @ViewModelInject constructor(
+    private val personUseCase: PersonUseCase,
+    private val compositeDisposable: CompositeDisposable
+) : ViewModel() {
 
     private val _personResults = MutableLiveData<List<Person>>()
 
     val personResults: LiveData<List<Person>> get() = _personResults
 
-    fun getPersons(){
+    fun getPersons() {
         personUseCase.getAll().observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(
@@ -31,14 +35,14 @@ class MainViewModel(private val personUseCase: PersonUseCase, private val compos
             ).addTo(compositeDisposable)
     }
 
-    fun save(personParam: PersonParam){
+    fun save(personParam: PersonParam) {
         personUseCase.save(personParam).subscribeOn(Schedulers.io())
-           .observeOn(AndroidSchedulers.mainThread())
-           .subscribe({
-               Log.d("Test", "Success")
-           }, {
-               it.printStackTrace()
-           }).addTo(disposable = compositeDisposable)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("Test", "Success")
+            }, {
+                it.printStackTrace()
+            }).addTo(disposable = compositeDisposable)
     }
 
     private fun Disposable.addTo(disposable: CompositeDisposable) {
@@ -47,7 +51,7 @@ class MainViewModel(private val personUseCase: PersonUseCase, private val compos
 
     override fun onCleared() {
         super.onCleared()
-        if (!compositeDisposable.isDisposed){
+        if (!compositeDisposable.isDisposed) {
             compositeDisposable.dispose()
         }
     }

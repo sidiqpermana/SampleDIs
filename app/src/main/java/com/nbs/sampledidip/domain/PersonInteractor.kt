@@ -8,8 +8,11 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PersonInteractor(private val repository: Repository) : PersonUseCase {
+@Singleton
+class PersonInteractor @Inject constructor(private val repository: Repository) : PersonUseCase {
     override fun getAll(): Flowable<List<Person>> {
         return repository.getAll().map {
             mapPerson(it)
